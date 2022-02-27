@@ -7,7 +7,7 @@ set -x
 # Install Debian dependencies.
 # TODO: Support Fedora/CentOS/etc. as well.
 sudo apt-get update
-sudo apt-get install -y build-essential checkinstall libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
+sudo apt-get install -y build-essential checkinstall libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev liblzma-dev libffi-dev automake
 
 short_version=$(git branch --show-current | sed -e 's#\.##')
 long_version=$(git branch --show-current)
