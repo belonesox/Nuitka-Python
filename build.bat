@@ -4,7 +4,7 @@ rem Go home.
 cd %~dp0
 
 set PGO_OPT=
-set ARCH_OPT=-x64
+set ARCH_OPT=
 set REBUILD_OPT=
 
 :CheckOpts
@@ -21,7 +21,7 @@ rem Build with nuget, it solves the directory structure for us.
 call .\Tools\nuget\build.bat %ARCH_OPT% %PGO_OPT% %REBUILD_OPT%
 
 rem Install with nuget into a build folder
-.\externals\windows-installer\nuget\nuget.exe install python -Source %~dp0\PCbuild\amd64 -OutputDirectory nuget-result
+if "%ARCH_OPT%" EQU "-x64" (.\externals\windows-installer\nuget\nuget.exe install python -Source %~dp0\PCbuild\amd64 -OutputDirectory nuget-result) else (.\externals\windows-installer\nuget\nuget.exe install python -Source %~dp0\PCbuild\win32 -OutputDirectory nuget-result)
 
 rem Move the standalone build result to "output". TODO: Version number could be queried here
 rem from the Python binary built, or much rather we do not use one in the nuget build at all.
