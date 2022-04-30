@@ -233,6 +233,8 @@ _posixsubprocess _posixsubprocess.c  # POSIX subprocess module helper
 
 _multiprocessing -I$(srcdir)/Modules/_multiprocessing _multiprocessing/multiprocessing.c _multiprocessing/posixshmem.c _multiprocessing/semaphore.c
 
+_posixshmem -I$(srcdir)/Modules/_multiprocessing _multiprocessing/posixshmem.c
+
 # Multimedia modules -- off by default.
 # These don't work for 64-bit platforms!!!
 # #993173 says audioop works on 64-bit platforms, though.
@@ -435,7 +437,6 @@ _dbm
 nis
 _ctypes_test
 ossaudiodev
-_posixshmem
 xxlimited
 #_lzma
 #
