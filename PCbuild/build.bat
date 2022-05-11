@@ -65,6 +65,7 @@ set kill=
 set do_pgo=
 set pgo_job=-m test --pgo
 
+
 :CheckOpts
 if "%~1"=="-h" goto Usage
 if "%~1"=="-c" (set conf=%2) & shift & shift & goto CheckOpts
@@ -129,6 +130,7 @@ if ERRORLEVEL 1 (echo Cannot locate MSBuild.exe on PATH or as MSBUILD variable &
 if "%kill%"=="true" call :Kill
 if ERRORLEVEL 1 exit /B 3
 
+
 if "%do_pgo%"=="true" (
     set conf=PGInstrument
     call :Build %1 %2 %3 %4 %5 %6 %7 %8 %9
@@ -145,7 +147,12 @@ if "%do_pgo%"=="true" (
     call :Kill
     set conf=PGUpdate
     set target=Build
+) 
+
+if "%PlatformDir%"=win32 (
+set conf="Release"
 )
+
 goto :Build
 
 :Kill
