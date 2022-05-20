@@ -345,10 +345,10 @@ extern "C" {
         tmp = tempfile.NamedTemporaryFile(delete=False)
         tmp.close()
         os.unlink(tmp.name)
-        os.rename(sys.executable, tmp.name)
+        shutil.move(sys.executable, tmp.name)
         ctypes.windll.kernel32.MoveFileExW(tmp.name, None, MOVEFILE_DELAY_UNTIL_REBOOT)
 
-        os.rename(os.path.join(build_dir, "python.exe"), interpreter_path)
+        shutil.move(os.path.join(build_dir, "python.exe"), interpreter_path)
     elif platform.system() == "Linux":
         sysconfig_libs = []
         sysconfig_lib_dirs = []
@@ -401,10 +401,10 @@ extern "C" {
         )
         tmp.close()
         os.unlink(tmp.name)
-        os.rename(interpreter_path, tmp.name)
+        shutil.move(interpreter_path, tmp.name)
         os.unlink(tmp.name)
 
-        os.rename(os.path.join(build_dir, "python"), interpreter_path)
+        shutil.move(os.path.join(build_dir, "python"), interpreter_path)
 
     shutil.rmtree(build_dir, ignore_errors=True)
 
