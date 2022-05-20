@@ -145,6 +145,10 @@ if "%do_pgo%"=="true" (
     call :Kill
     set conf=PGUpdate
     set target=Build
+) 
+
+if "%PlatformDir%"=="win32" (
+set conf="Release"
 )
 goto :Build
 
