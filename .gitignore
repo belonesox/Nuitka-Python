@@ -126,6 +126,6 @@ Tools/ssl/win32
 !/Python/
 
 # Nuitka-Python specifics here:
-nuget-result
+nuget-result*
 output
 
