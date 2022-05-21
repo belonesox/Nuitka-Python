@@ -331,13 +331,18 @@ extern "C" {
             ["python.c"], output_dir=build_dir, include_dirs=include_dirs, macros=macros
         )
 
+        extra_preargs_ = ["/LTCG"]
+        if not ('32bit', 'WindowsPE') == platform.architecture():
+            # Not Win32 where is no PGO
+            extra_preargs_.append("/USEPROFILE:PGD=python.pgd")
+
         compiler.link_executable(
             [os.path.join(build_dir, "python.obj")],
             "python",
             output_dir=build_dir,
             libraries=link_libs,
             library_dirs=library_dirs,
-            extra_preargs=["/LTCG", "/USEPROFILE:PGD=python.pgd"],
+            extra_preargs=extra_preargs_,
         )
 
         # Replace running interpreter by moving current version to a temp file, then marking it for deletion.
