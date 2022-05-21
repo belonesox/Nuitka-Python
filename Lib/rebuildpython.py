@@ -87,7 +87,7 @@ def run_rebuild():
 
     from distutils.sysconfig import get_config_var
 
-    ext_suffix = get_config_var("EXT_SUFFIX")
+    ext_suffix = get_config_var("SO" if str is bytes else "EXT_SUFFIX")
 
     extra_scan_dirs = []
     if platform.system() == "Windows":
@@ -194,14 +194,35 @@ def run_rebuild():
     for _name, path in foundLibs.items():
         link_libs += [path]
 
-        if os.path.isfile(path + ".link.json"):
-            with open(path + ".link.json", "r") as f:
+    link_libs = list(set(link_libs))
+    library_dirs = list(set(library_dirs))
+
+    libIdx = 0
+    while libIdx < len(link_libs):
+        final_path = None
+        lib = link_libs[libIdx]
+        if os.path.isfile(lib):
+            final_path = lib
+        else:
+            for dir in library_dirs:
+                if os.path.isfile(os.path.join(dir, lib)):
+                    final_path = os.path.join(dir, lib)
+                    break
+                elif os.path.isfile(os.path.join(dir, lib) + ".a"):
+                    final_path = os.path.join(dir, lib) + ".a"
+                    break
+        if not final_path:
+            libIdx += 1
+            continue
+        if os.path.isfile(final_path + ".link.json"):
+            with open(final_path + ".link.json", "r") as f:
                 linkData = json.load(f)
                 link_libs += linkData["libraries"]
                 library_dirs += [
-                    os.path.join(os.path.dirname(path), x)
+                    os.path.join(os.path.dirname(final_path), x)
                     for x in linkData["library_dirs"]
                 ]
+        libIdx += 1
 
     link_libs = list(set(link_libs))
     library_dirs = list(set(library_dirs))
@@ -324,10 +345,10 @@ extern "C" {
         tmp = tempfile.NamedTemporaryFile(delete=False)
         tmp.close()
         os.unlink(tmp.name)
-        os.rename(sys.executable, tmp.name)
+        shutil.move(sys.executable, tmp.name)
         ctypes.windll.kernel32.MoveFileExW(tmp.name, None, MOVEFILE_DELAY_UNTIL_REBOOT)
 
-        os.rename(os.path.join(build_dir, "python.exe"), interpreter_path)
+        shutil.move(os.path.join(build_dir, "python.exe"), interpreter_path)
     elif platform.system() == "Linux":
         sysconfig_libs = []
         sysconfig_lib_dirs = []
@@ -380,10 +401,10 @@ extern "C" {
         )
         tmp.close()
         os.unlink(tmp.name)
-        os.rename(interpreter_path, tmp.name)
+        shutil.move(interpreter_path, tmp.name)
         os.unlink(tmp.name)
 
-        os.rename(os.path.join(build_dir, "python"), interpreter_path)
+        shutil.move(os.path.join(build_dir, "python"), interpreter_path)
 
     shutil.rmtree(build_dir, ignore_errors=True)
 

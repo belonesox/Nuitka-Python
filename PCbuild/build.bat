@@ -149,7 +149,7 @@ if "%do_pgo%"=="true" (
     set target=Build
 ) 
 
-if "%PlatformDir%"=win32 (
+if "%PlatformDir%"=="win32" (
 set conf="Release"
 )
 
