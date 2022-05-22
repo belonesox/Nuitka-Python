@@ -128,4 +128,6 @@ Tools/ssl/win32
 # Nuitka-Python specifics here:
 nuget-result*
 output
+output32
+
 
