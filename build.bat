@@ -1,4 +1,5 @@
 setlocal enableextensions
+@echo on
 
 rem Go home.
 cd %~dp0
@@ -13,14 +14,6 @@ if "%~1" EQU "-x64" (set ARCH_OPT=-x64) && shift && goto CheckOpts
 if "%~1" EQU "--pgo" (set PGO_OPT=--pgo) && shift && goto CheckOpts
 if "%~1" EQU "-r" (set REBUILD_OPT=-r) && shift && goto CheckOpts
 
-
-rem Remove old output
-del /S /Q output nuget-result >nul
-
-rem Build with nuget, it solves the directory structure for us.
-call .\Tools\nuget\build.bat %ARCH_OPT% %PGO_OPT% %REBUILD_OPT%
-
-rem Install with nuget into a build folder
 set NUGET_PYTHON_PACKAGE_NAME=python
 set ARCH_NAME=amd64
 if "%ARCH_OPT%" EQU "-x86" (
@@ -28,13 +21,15 @@ if "%ARCH_OPT%" EQU "-x86" (
     set ARCH_NAME=win32
 )
 
-.\externals\windows-installer\nuget\nuget.exe install %NUGET_PYTHON_PACKAGE_NAME% -Source %~dp0\PCbuild\%ARCH_NAME% -OutputDirectory nuget-result-%NUGET_PYTHON_PACKAGE_NAME%
 
-@REM if "%ARCH_OPT%" EQU "-x64" (
-@REM     .\externals\windows-installer\nuget\nuget.exe install python -Source %~dp0\PCbuild\amd64 -OutputDirectory nuget-result-%NUGET_PYTHON_PACKAGE_NAME%
-@REM ) else (
-@REM     .\externals\windows-installer\nuget\nuget.exe install pythonx86 -Source %~dp0\PCbuild\win32 -OutputDirectory nuget-result
-@REM )
+rem Remove old output
+del /S /Q output nuget-result-%NUGET_PYTHON_PACKAGE_NAME% >nul
+
+rem Build with nuget, it solves the directory structure for us.
+call .\Tools\nuget\build.bat %ARCH_OPT% %PGO_OPT% %REBUILD_OPT%
+
+rem Install with nuget into a build folder
+.\externals\windows-installer\nuget\nuget.exe install %NUGET_PYTHON_PACKAGE_NAME% -Source %~dp0\PCbuild\%ARCH_NAME% -OutputDirectory nuget-result-%NUGET_PYTHON_PACKAGE_NAME%
 
 rem Move the standalone build result to "output". TODO: Version number could be queried here
 rem from the Python binary built, or much rather we do not use one in the nuget build at all.
