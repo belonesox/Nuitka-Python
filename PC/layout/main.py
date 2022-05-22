@@ -186,6 +186,9 @@ def get_layout(ns):
     if not found_any:
         log_error("Failed to locate vcruntime DLL in the build.")
 
+    for dest, src in rglob(ns.build, "lzma.dll"):
+        yield dest, src
+
     yield "LICENSE.txt", ns.build / "LICENSE.txt"
 
     for dest, src in rglob(ns.build, ("*.pyd", "*.dll")):
