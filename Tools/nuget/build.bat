@@ -1,4 +1,4 @@
-echo off
+@echo off
 setlocal
 set D=%~dp0
 set PCBUILD=%D%..\..\PCbuild\
